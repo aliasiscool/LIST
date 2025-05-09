@@ -27,7 +27,7 @@ app.post('/upload', async (req, res) => {
     const safeFilename = name.replace(/\s+/g, '');
     const clientDir = path.join(__dirname, 'clients');
 
-    // ✅ Double safety: create folder if it doesn't exist
+    // ✅ Ensure /clients folder exists
     if (!fs.existsSync(clientDir)) {
       fs.mkdirSync(clientDir, { recursive: true });
     }
@@ -44,7 +44,7 @@ app.post('/upload', async (req, res) => {
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     <style>
       body {
-        background-color: #FFFFFF;
+        background-color: #FAFAFA;
         font-family: 'Poppins', sans-serif;
         color: #222;
         padding: 20px;
@@ -54,7 +54,8 @@ app.post('/upload', async (req, res) => {
         max-width: 90%;
         margin: 15px 0;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        box-shadow: 0 0 10px rgba(0,0,0,0.08);
+        border: 1px solid #eee;
       }
       div {
         display: flex;
@@ -90,5 +91,6 @@ app.post('/upload', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Server live at port ${PORT}`);
 });
+
 
 
