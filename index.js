@@ -22,8 +22,14 @@ app.post('/upload', async (req, res) => {
       .map(url => url.trim().replace(/^{|}$/g, ''));
 
     const safeFilename = name.replace(/\s+/g, '');
+    const clientDir = path.join(__dirname, 'clients');
 
-    const clientFile = path.join(__dirname, 'clients', `${safeFilename}.html`);
+    // ✅ Ensure /clients directory exists
+    if (!fs.existsSync(clientDir)) {
+      fs.mkdirSync(clientDir, { recursive: true });
+    }
+
+    const clientFile = path.join(clientDir, `${safeFilename}.html`);
 
     const html = `
 <!DOCTYPE html>
@@ -77,3 +83,4 @@ app.post('/upload', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Server live at port ${PORT}`);
 });
+
