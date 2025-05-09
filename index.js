@@ -68,7 +68,7 @@ app.post('/upload', async (req, res) => {
     <h1>Photos for Listing ${name}</h1>
     ${imageUrls.map(url => `
       <div>
-        <img src="${url}" alt="Listing Photo">
+        <img src="${url}" alt="No Photos Submitted">
       </div>
     `).join('\n')}
   </body>
