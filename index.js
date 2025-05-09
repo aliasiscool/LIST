@@ -7,6 +7,8 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 app.use(bodyParser.json());
+
+// ✅ Serve static HTML files from /clients
 app.use('/clients', express.static(path.join(__dirname, 'clients')));
 
 app.post('/upload', async (req, res) => {
@@ -17,6 +19,7 @@ app.post('/upload', async (req, res) => {
       return res.status(400).json({ error: 'Missing name or image_urls_combined' });
     }
 
+    // ✅ Split and clean URLs
     const imageUrls = image_urls_combined
       .split(',')
       .map(url => url.trim().replace(/^{|}$/g, ''));
@@ -24,13 +27,14 @@ app.post('/upload', async (req, res) => {
     const safeFilename = name.replace(/\s+/g, '');
     const clientDir = path.join(__dirname, 'clients');
 
-    // ✅ Ensure /clients directory exists
+    // ✅ Double safety: create folder if it doesn't exist
     if (!fs.existsSync(clientDir)) {
       fs.mkdirSync(clientDir, { recursive: true });
     }
 
     const clientFile = path.join(clientDir, `${safeFilename}.html`);
 
+    // ✅ Generate HTML page
     const html = `
 <!DOCTYPE html>
 <html>
@@ -69,8 +73,10 @@ app.post('/upload', async (req, res) => {
   </body>
 </html>`;
 
+    // ✅ Save to file
     fs.writeFileSync(clientFile, html);
 
+    // ✅ Return public URL
     const publicUrl = `https://${req.hostname}/clients/${safeFilename}.html`;
     res.json({ success: true, url: publicUrl });
 
@@ -80,7 +86,9 @@ app.post('/upload', async (req, res) => {
   }
 });
 
+// ✅ Start server
 app.listen(PORT, () => {
   console.log(`✅ Server live at port ${PORT}`);
 });
+
 
