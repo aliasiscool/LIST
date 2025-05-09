@@ -13,21 +13,21 @@ app.use('/clients', express.static(path.join(__dirname, 'clients')));
 
 app.post('/upload', async (req, res) => {
   try {
-    const { name, image_urls_combined } = req.body;
+    const { name, image_urls_combined, image_url } = req.body;
 
-    if (!name || !image_urls_combined) {
-      return res.status(400).json({ error: 'Missing name or image_urls_combined' });
+    if (!name || (!image_urls_combined && !image_url)) {
+      return res.status(400).json({ error: 'Missing name or image data' });
     }
 
-    // ✅ Split and clean URLs
-    const imageUrls = image_urls_combined
+    // ✅ Determine source: single or multiple
+    const rawUrls = image_urls_combined || image_url;
+    const imageUrls = rawUrls
       .split(',')
       .map(url => url.trim().replace(/^{|}$/g, ''));
 
     const safeFilename = name.replace(/\s+/g, '');
     const clientDir = path.join(__dirname, 'clients');
 
-    // ✅ Ensure /clients folder exists
     if (!fs.existsSync(clientDir)) {
       fs.mkdirSync(clientDir, { recursive: true });
     }
@@ -74,10 +74,8 @@ app.post('/upload', async (req, res) => {
   </body>
 </html>`;
 
-    // ✅ Save to file
     fs.writeFileSync(clientFile, html);
 
-    // ✅ Return public URL
     const publicUrl = `https://${req.hostname}/clients/${safeFilename}.html`;
     res.json({ success: true, url: publicUrl });
 
@@ -87,10 +85,10 @@ app.post('/upload', async (req, res) => {
   }
 });
 
-// ✅ Start server
 app.listen(PORT, () => {
   console.log(`✅ Server live at port ${PORT}`);
 });
+
 
 
 
